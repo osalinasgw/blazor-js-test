@@ -1,0 +1,23 @@
+@using System.Runtime.InteropServices.JavaScript
+
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+<button @onclick="CallJsFromCs">This calls an exported function in a module</button>
+
+@code {
+    private IJSObjectReference? module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./ButtonJsModule.js");
+        }
+    }
+
+    private async Task CallJsFromCs()
+    {
+        await module.InvokeVoidAsync("isolatedModuleFn");
+    }
+}
